@@ -1,9 +1,188 @@
-{% if latest_sample_list %}
-    <ul>
-    {% for muestra in latest_muestra_list %}
-        <li><a href="/EIMI/{{ muestra.hash}}/">{{ muestra.name }}</a></li>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Muestras analizadas</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->
+
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/static/node_modules/bootstrap/dist/css/bootstrap.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/static/node_modules/@fortawesome/fontawesome-free/css/fontawesome.min.css">
+
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/static/node_modules/select2/dist/css/select2.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/static/css/perfect-scrollbar.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/static/css/util_tables.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/main_tables.css">
+<!--===============================================================================================-->
+</head>
+<body>
+<center><h1>Ultimas muestras analizadas</h1></center>
+	<div class="limiter">
+		<div class="container-table100">
+			<div class="wrap-table100">
+				<div class="table100 ver1 m-b-110">
+					<div class="table100-head">
+						<table>
+							<thead>
+								<tr class="row100 head">
+									<th class="cell100 column1">Nombre/Hash</th>
+									<th class="cell100 column2">Arquitectura</th>
+									<th class="cell100 column3">Fecha de análisis</th>
+									<th class="cell100 column4">Familia asociada</th>
+									<th class="cell100 column5">Vista detallada</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+
+					<div class="table100-body js-pscroll">
+						<table>
+							<tbody>
+								<tr class="row100 body">
+                                    {% if latest_muestra_list %}
+
+        {% for muestra in latest_muestra_list %}
+
+            <td class="cell100 column1">{{muestra}}</td>
+            <td class="cell100 column2">arch</td>
+            <td class="cell100 column3">{{muestra.date}}</td>
+            <td class="cell100 column4">{{ muestra.familia }}</td>
+            <td class="cell100 column5"></td>
+
     {% endfor %}
-    </ul>
+
+
 {% else %}
-    <p>No hay muestras de malware.</p>
+    <p>No polls are available.</p>
 {% endif %}
+
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+<!--===============================================================================================-->
+	<script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+<!--===============================================================================================-->
+<script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="/static/js/popper.min.js"></script>
+<!--===============================================================================================-->
+	<script src="/static/node_modules/select2/dist/js/select2.min.js"></script>
+<!--===============================================================================================-->
+	<script src="/static/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js"></script>
+
+<!--===============================================================================================-->
+	<script src="/static/js/table_main.js"></script>
+<style>
+#my_dataviz {
+  display: table;
+  margin: 0 auto;
+
+}
+
+#outer {
+
+  width:100%
+}
+</style>
+<div id="outer"><div id="my_dataviz"></div></div>
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+ <script>
+
+// set the dimensions and margins of the graph
+var width = 800
+    height = 450
+    margin = 40
+
+// The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+var radius = Math.min(width, height) / 2 - margin
+
+// append the svg object to the div called 'my_dataviz'
+var svg = d3.select("#my_dataviz")
+  .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+
+var data = {};
+{% for cuenta in cuenta_familia %}
+    data[{{cuenta.familia}}]={{cuenta.total}};
+    {% endfor %}
+
+// set the color scale
+var color = d3.scaleOrdinal()
+  .domain(data)
+  .range(d3.schemeSet2);
+var color2 = d3.scaleOrdinal()
+  .domain(data)
+  .range(d3.schemeSet2);
+
+// Compute the position of each group on the pie:
+var pie = d3.pie()
+  .value(function(d) {return d.value; })
+var data_ready = pie(d3.entries(data))
+// Now I know that group A goes from 0 degrees to x degrees and so on.
+
+// shape helper to build arcs:
+var arcGenerator = d3.arc()
+  .innerRadius(0)
+  .outerRadius(radius)
+
+// Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+svg
+  .selectAll('mySlices')
+  .data(data_ready)
+  .enter()
+  .append('path')
+    .attr('d', arcGenerator)
+    .attr('fill', function(d){ return(color(d.data.key)) })
+    .attr("stroke", "black")
+    .style("stroke-width", "2px")
+    .style("opacity", 0.7)
+
+// Now add the annotation. Use the centroid method to get the best coordinates
+
+svg.selectAll("mydots")
+  .data(data_ready)
+  .enter()
+  .append("circle")
+    .attr("cx", 200)
+    .attr("cy", function(d,i){ return -100 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
+    .attr("r", 7)
+    .style("fill", function(d){ return color(d.data.key)})
+
+ svg.selectAll("mylabels")
+  .data(data_ready)
+  .enter()
+  .append("text")
+    .attr("x", 220)
+    .attr("y", function(d,i){ return -100 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
+    .style("fill", function(d){ return color(d.data.key)})
+    .text(function(d){ return "Familia:" +d.data.key+" Muestras:"+d.data.value})
+    .attr("text-anchor", "left")
+    .style("alignment-baseline", "middle")
+
+
+</script>
+
+</body>
+</html>
