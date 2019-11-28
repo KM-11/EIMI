@@ -5,7 +5,7 @@ from django.db.models import Count
 
 
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'tables.html')
 
 
 def samples_detail(request):
@@ -15,3 +15,9 @@ def samples_detail(request):
     context = {'latest_muestra_list': latest_muestra_list,
                'cuenta_familia': cuenta_familia}
     return render(request, 'web/global_samples.html', context)
+
+
+def sample_detail(request, muestra_hash):
+    muestra=Muestra.objects.get(hash=muestra_hash)
+    context = {'muestra': muestra}
+    return render(request, 'web/sample_detail.html', context)

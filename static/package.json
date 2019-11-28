@@ -19,12 +19,16 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "5.11.2",
+        "animate": "^1.0.0",
         "bootstrap": "4.4.0",
         "chart.js": "2.9.3",
+        "d3": "5.14.2",
         "datatables.net-bs4": "1.10.20",
         "jquery": "3.4.1",
         "jquery.easing": "1.4.1",
-        "d3": "5.14.2"
+        "perfect-scrollbar": "^1.4.0",
+        "popper": "^1.0.1",
+        "select2": "^4.0.12"
     },
     "devDependencies": {}
 }
