@@ -36,7 +36,7 @@
 									<th class="cell100 column2">Arquitectura</th>
 									<th class="cell100 column3">Fecha de análisis</th>
 									<th class="cell100 column4">Familia asociada</th>
-									<th class="cell100 column5">Vista detallada</th>
+
 								</tr>
 							</thead>
 						</table>
@@ -50,11 +50,11 @@
 
         {% for muestra in latest_muestra_list %}
     <tr class="row100 body">
-            <td class="cell100 column1">{{muestra}}</td>
-            <td class="cell100 column2">arch</td>
+            <td class="cell100 column1"><a href=/EIMI/{{ muestra.hash}}/>{{muestra}}</a></td>
+            <td class="cell100 column2">{{ muestra.architecture }}</td>
             <td class="cell100 column3">{{muestra.date}}</td>
             <td class="cell100 column4">{{ muestra.familia }}</td>
-            <td class="cell100 column5"></td>
+
 	</tr>
     {% endfor %}
 
