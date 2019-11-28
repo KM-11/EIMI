@@ -25,8 +25,7 @@ def main():
 
     # SSH connection
 
-    '''
-    ssh = ssh_connect("127.0.0.1", 2222, "root", "km11")
+    ssh = ssh_connect("localhost", 2222, "root", "km11")
 
     if ssh is None:
         handler.stop_guest(domain)  # Destroy virtual machine
@@ -40,7 +39,6 @@ def main():
 
     handler.stop_guest(domain)  # Destroy virtual machine
     handler.shutdown()  # Close connection to qemu:///session
-    '''
 
     # Dynamic analysis
 

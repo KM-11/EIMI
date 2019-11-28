@@ -3,7 +3,7 @@ import socket
 from termcolor import colored
 import os
 
-CONNECTION_TIMEOUT = 3
+CONNECTION_TIMEOUT = 200
 EXECUTION_TIMEOUT = 3
 
 
@@ -37,8 +37,9 @@ def ssh_connect(ip, port, username, password):
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     if is_connection_successful(ip, port):
-        try:
-            ssh.connect(ip, port=port, username=username, password=password, allow_agent=False, look_for_keys=False)
+        ssh.connect(ip, port=port, username=username, password=password, allow_agent=False, look_for_keys=False)
+        # try:
+        '''    
         except paramiko.ssh_exception.AuthenticationException:
             print(colored("[X] SSH wrong credentials", 'red'))
             exit(0)
@@ -47,6 +48,7 @@ def ssh_connect(ip, port, username, password):
 
     else:
         return None
+        '''
 
 
 def run_sample(ssh, localpath, remotepath):
