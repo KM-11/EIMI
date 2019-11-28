@@ -1,30 +1,30 @@
 <domain type='qemu' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
-  <name>x86_64</name>
-  <memory unit='KiB'>262144</memory>
-  <currentMemory unit='KiB'>262144</currentMemory>
-  <os>
-    <type arch='x86_64' machine='q35'>hvm</type>
-    <kernel>/Users/maximo/Desktop/OneDrive_1_26-11-2019/MAQUINAS/x86_64/bzImage</kernel>
-    <cmdline>console=tty1 root=/dev/vda</cmdline>
-    <boot dev='hd'/>
-  </os>
-  <on_poweroff>destroy</on_poweroff>
-  <on_reboot>restart</on_reboot>
-  <on_crash>destroy</on_crash>
-  <devices>
-    <emulator>/usr/local/bin/qemu-system-x86_64</emulator>
-      <disk type='file' device='disk'>
-      <driver name='qemu' type='raw'/>
-      <source file='/Users/maximo/Desktop/OneDrive_1_26-11-2019/MAQUINAS/x86_64/rootfs.ext2'/>
-      <target dev='hda' bus='virtio'/>
-    </disk>
- </devices>
-<qemu:commandline>
-    <qemu:arg value='-device'/>
-    <qemu:arg value='virtio-net-pci,netdev=eth0'/>
-    <qemu:arg value='-netdev'/>
-    <qemu:arg value='user,id=eth0,restrict=on,hostfwd=tcp:127.0.0.1:2222-:65111'/>
-    <qemu:arg value='-snapshot' />
-    <qemu:arg value="-nographic" />
-  </qemu:commandline>
+    <name>x86_64</name>
+    <memory unit='KiB'>262144</memory>
+    <currentMemory unit='KiB'>262144</currentMemory>
+    <os>
+        <type arch='x86_64' machine='q35'>hvm</type>
+        <kernel>{machine_path}bzImage</kernel>
+        <cmdline>console=tty1 root=/dev/vda</cmdline>
+        <boot dev='hd'/>
+    </os>
+    <on_poweroff>destroy</on_poweroff>
+    <on_reboot>restart</on_reboot>
+    <on_crash>destroy</on_crash>
+    <devices>
+        <emulator>{path_qemu}qemu-system-x86_64</emulator>
+        <disk type='file' device='disk'>
+            <driver name='qemu' type='raw'/>
+            <source file='{machine_path}rootfs.ext2'/>
+            <target dev='hda' bus='virtio'/>
+        </disk>
+    </devices>
+    <qemu:commandline>
+        <qemu:arg value='-device'/>
+        <qemu:arg value='virtio-net-pci,netdev=eth0'/>
+        <qemu:arg value='-netdev'/>
+        <qemu:arg value='user,id=eth0,restrict=on,hostfwd=tcp:127.0.0.1:2222-:65111'/>
+        <qemu:arg value='-snapshot'/>
+        <qemu:arg value="-nographic"/>
+    </qemu:commandline>
 </domain>
