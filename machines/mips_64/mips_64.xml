@@ -1,35 +1,27 @@
 <domain type='qemu' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
-  <name>MIPS_64</name>
-  <memory unit='KiB'>262144</memory>
-  <currentMemory unit='KiB'>262144</currentMemory>
-  <os>
-    <type arch='mips64' machine='malta'>hvm</type>
-    <kernel>/Users/maximo/Desktop/OneDrive_1_26-11-2019/MAQUINAS/MIPS_64/vmlinux</kernel>
-    <cmdline>root=/dev/hda</cmdline>
-    <boot dev='hd'/>
-  </os>
-  <on_poweroff>destroy</on_poweroff>
-  <on_reboot>restart</on_reboot>
-  <on_crash>destroy</on_crash>
-  <devices>
-    <emulator>/usr/local/bin/qemu-system-mips64</emulator>
-    <!-- <disk type='file' device='disk'>
-      <driver name='qemu' type='raw'/>
-      <source file='/Users/maximo/Desktop/OneDrive_1_26-11-2019/MAQUINAS/MIPS_32/rootfs.ext2'/>
-      <target dev='hda' />
-    </disk> -->
-  <controller type='pci' index='0' model='pci-root'/>
-
-
- </devices>
-<qemu:commandline>
-  <qemu:arg value='-hda'/>
-  <qemu:arg value='/Users/maximo/Desktop/OneDrive_1_26-11-2019/MAQUINAS/MIPS_64/rootfs.ext2'/>
-    
-    <qemu:arg value='-net'/>
-    <qemu:arg value='nic,model=pcnet'/>
-    <qemu:arg value='-net'/>
-    <qemu:arg value='user,restrict=on,hostfwd=tcp:127.0.0.1:2222-:65111'/>
-    <qemu:arg value='-snapshot' />
-  </qemu:commandline>
+    <name>MIPS_64</name>
+    <memory unit='KiB'>262144</memory>
+    <currentMemory unit='KiB'>262144</currentMemory>
+    <os>
+        <type arch='mips64' machine='malta'>hvm</type>
+        <kernel>{machine_path}vmlinux</kernel>
+        <cmdline>root=/dev/hda</cmdline>
+        <boot dev='hd'/>
+    </os>
+    <on_poweroff>destroy</on_poweroff>
+    <on_reboot>restart</on_reboot>
+    <on_crash>destroy</on_crash>
+    <devices>
+        <emulator>{path_qemu}qemu-system-mips64</emulator>
+        <controller type='pci' index='0' model='pci-root'/>
+    </devices>
+    <qemu:commandline>
+        <qemu:arg value='-hda'/>
+        <qemu:arg value='{machine_path}rootfs.ext2'/>
+        <qemu:arg value='-net'/>
+        <qemu:arg value='nic,model=pcnet'/>
+        <qemu:arg value='-net'/>
+        <qemu:arg value='user,restrict=on,hostfwd=tcp:127.0.0.1:2222-:65111'/>
+        <qemu:arg value='-snapshot'/>
+    </qemu:commandline>
 </domain>
