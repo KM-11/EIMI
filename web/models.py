@@ -30,6 +30,7 @@ class Muestra(models.Model):
     name = models.CharField(max_length=50, null=True)
     instancePath = models.CharField(max_length=200)
     Vmachine_dst = models.ForeignKey(Vmachine,null=True,on_delete=models.SET_NULL)
+    architecture = models.CharField(max_length=30, default="arm_32")
     analisis = models.CharField(max_length=200)
     familia = models.ForeignKey(Familia, null=True, on_delete=models.SET_NULL)
     date = models.DateField(default=datetime.date.today)

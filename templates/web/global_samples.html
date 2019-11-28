@@ -45,17 +45,17 @@
 					<div class="table100-body js-pscroll">
 						<table>
 							<tbody>
-								<tr class="row100 body">
+
                                     {% if latest_muestra_list %}
 
         {% for muestra in latest_muestra_list %}
-
+    <tr class="row100 body">
             <td class="cell100 column1">{{muestra}}</td>
             <td class="cell100 column2">arch</td>
             <td class="cell100 column3">{{muestra.date}}</td>
             <td class="cell100 column4">{{ muestra.familia }}</td>
             <td class="cell100 column5"></td>
-
+	</tr>
     {% endfor %}
 
 
@@ -63,7 +63,7 @@
     <p>No polls are available.</p>
 {% endif %}
 
-								</tr>
+
 							</tbody>
 						</table>
 					</div>
