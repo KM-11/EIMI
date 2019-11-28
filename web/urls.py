@@ -7,5 +7,5 @@ from . import views
 urlpatterns = [
     path('',views.index),
     path('general_samples_view', views.samples_detail, name="general_sample_names"),
-     path('<str:muestra_hash>/', views.sample_detail, name='muestra_detail')
+     path('<str:muestra_hash>/', views.sample_detail, name='sample_detail')
 ]
