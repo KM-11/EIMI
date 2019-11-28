@@ -1,0 +1,9 @@
+{% if latest_sample_list %}
+    <ul>
+    {% for muestra in latest_muestra_list %}
+        <li><a href="/EIMI/{{ muestra.hash}}/">{{ muestra.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No hay muestras de malware.</p>
+{% endif %}
