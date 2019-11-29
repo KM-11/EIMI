@@ -2,9 +2,12 @@ import paramiko
 import socket
 from termcolor import colored
 import os
+import time
+from scp import SCPClient, SCPException
 
-CONNECTION_TIMEOUT = 200
-EXECUTION_TIMEOUT = 3
+CONNECTION_TIMEOUT = 30
+DEPLOY_TIMEOUT = 10
+EXECUTION_TIMEOUT = 20
 
 
 def is_connection_successful(ip, port):
@@ -21,8 +24,8 @@ def is_connection_successful(ip, port):
     except ConnectionRefusedError:
         print(colored("[X] Connection refused, closed port", 'red'))
         success = False
-    except:
-        print(colored("[X] Invalid IP or port format", 'red'))
+    except Exception as e:
+        print(colored(e, 'red'))
         success = False
     finally:
         sock.close()
@@ -37,9 +40,9 @@ def ssh_connect(ip, port, username, password):
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     if is_connection_successful(ip, port):
-        ssh.connect(ip, port=port, username=username, password=password, allow_agent=False, look_for_keys=False)
-        # try:
-        '''    
+        try:
+            time.sleep(DEPLOY_TIMEOUT)  # Timeout to deploy virtual machine and execute SSH service
+            ssh.connect(ip, port=port, username=username, password=password, timeout=CONNECTION_TIMEOUT)
         except paramiko.ssh_exception.AuthenticationException:
             print(colored("[X] SSH wrong credentials", 'red'))
             exit(0)
@@ -48,7 +51,6 @@ def ssh_connect(ip, port, username, password):
 
     else:
         return None
-        '''
 
 
 def run_sample(ssh, localpath, remotepath):
@@ -67,42 +69,31 @@ def run_sample(ssh, localpath, remotepath):
     # Split dir and sample file
     dirname, filename = os.path.split(localpath)
 
-    sftp = ssh.open_sftp()
-
-    # Upload sample to virtual machine
-    try:
-        sftp.put(localpath, os.path.join(remotepath, filename))
-    except PermissionError:
-        print(colored("[X] Access denied to remote path", 'red'))
-        exit(0)
-
-    # Build strace command TODO
-    command = "strace -ff -o " + filename + " cat " + filename
-
-    # Run strace in virtual machine
+    # Create sample execution environment
+    command = "cd " + remotepath + "; mkdir " + filename
+    print(command)
     ssh.exec_command(command, timeout=EXECUTION_TIMEOUT)
 
-    # Download strace output files TODO
-    # sftp.get(os.path.join(remotepath, filename), localpath)
+    # Upload malware sample to virtual machine
+    scp = SCPClient(ssh.get_transport())
 
-    sftp.close()
+    try:
+        scp.put(localpath, remote_path=os.path.join(remotepath, filename))
+    except SCPException as e:
+        print(colored(e, 'red'))
+        exit(0)
+
+    # Build commands to execute in VM TODO
+    command = "cd " + os.path.join(remotepath, filename) + "; strace -ff -o " + filename + " cat " + filename
+    print(command)
+
+    # Run strace in deployed virtual machine
+    ssh.exec_command(command, timeout=EXECUTION_TIMEOUT)
+
+    time.sleep(EXECUTION_TIMEOUT)  # Timeout to execute malware
+
+    # Download strace output files
+    scp.get(os.path.join(remotepath, filename), '../tmp', recursive=True)
+
+    scp.close()
     ssh.close()
-
-
-def main():
-    ip = "127.0.0.1"
-    port = 2222
-    username = "root"
-    password = "km11"
-
-    # localpath = "/Users/swarley/Downloads/download.png"
-    localpath = "passwords.txt"
-    remotepath = "/home/msfadmin"
-
-    ssh = ssh_connect(ip, port, username, password)
-
-    run_sample(ssh, localpath, remotepath)
-
-
-if __name__ == "__main__":
-    main()

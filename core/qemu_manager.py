@@ -68,13 +68,3 @@ class LibvirtHandler:
 
     def shutdown(self):
         self.conn.close()
-
-
-def main():
-    pass
-    # a = LibvirtHandler()
-    # a.start_guest("x86_64")
-
-
-if __name__ == '__main__':
-    main()
