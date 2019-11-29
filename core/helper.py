@@ -18,3 +18,4 @@ def find_ip_address(data):
 	pattern = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 	matches = re.findall(pattern,data)
 	return list(filter(lambda x: is_ip_valid(x),list(matches)))
+
