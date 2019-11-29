@@ -151,7 +151,7 @@ class Elf:
     def get_strings(self):
         self.strings = self.static_analysis.get_data_strings()
 
-    def dump_to_json(self):
+    def dump_to_dict(self):
         elf_dict = dict()
         elf_dict['arch'] = self.arch 
         elf_dict['machine'] = self.machine

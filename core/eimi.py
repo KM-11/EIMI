@@ -92,6 +92,10 @@ def main():
     sysc = syscall_parser("tmp/" + hash + "/")
     print(colored("[+] Done!", 'green'))
 
+    ########################
+    ###   Sample to db   ###
+    ########################
+    sample_info=sample.dump_todict()
 
 if __name__ == '__main__':
     main()
