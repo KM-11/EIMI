@@ -9,14 +9,14 @@ This file describes the recommended actions to be followed when submitting a con
 * Provide an extensive and accurate description of the implemented changes, and what issues are they addressing.
 * Submit the pull request.
 
-## How to report an issue
+## How to Report an Issue
 
 Before reporting an issue, please make sure that:
 * you are using the latest version of EIMI.
 * you are using a clean installation.
 * the issue has not been reported yet.
 
-## How to report a bug
+## How to Report a Bug
 
 In order for the developers to be able to properly address the issues, please bear this suggestions in mind when submitting a bug report:
 * a specific, but sufficiently detailed title and bug description increases the usefulness of the report. The easier it is to reproduce, the sooner it will be addressed.
