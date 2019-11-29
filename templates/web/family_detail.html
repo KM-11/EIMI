@@ -3,10 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
 </head>
 <body>
+   {% if family  %}
+
+       {{muestras}}
+   {% endif %}
+
 <div id="div_basicResize"></div>
 <script src="/static/node_modules/d3/dist/d3.min.js"></script>
+<script src="/static/node_modules/d3-scale-chromatic/dist/d3-scale-chromatic.min.js"></script>
 <script>
 
 // Initialize a SVG area. We know the height but NOT the width
@@ -71,14 +78,21 @@ var Tooltip = d3.select("#div_basicResize")
 
   }
 // Initialize circles. Note that the X scale is not available yet, so we cannot draw them
+var myColor = d3.scaleSequential().domain([1,150])
+  .interpolator(d3.interpolateRdYlGn);
+//svg.selectAll(".firstrow").data(data).enter().append("circle").attr("cx", function(d,i){return 30 + i*60}).attr("cy", 50).attr("r", 19).attr("fill", function(d){return myColor(d) })
+
+
 var myCircles = Svg
   .selectAll("circles")
   .data(data)
   .enter()
   .append("circle")
-    .style("fill", "#69b2b3")
+
     .attr("r", 20)
     .attr("cy", 100)
+.attr("fill", function(d){return myColor(d) })
+
 
 
 
