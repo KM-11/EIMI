@@ -2,6 +2,7 @@ from helper import load_env_file
 from optparse import OptionParser
 from qemu_manager import LibvirtHandler
 from connection_handler import *
+import os
 
 
 def main():
@@ -18,14 +19,35 @@ def main():
     #   exit(0)
 
     # Static analysis
+    #
+    sample = Elf(file)
+    sample.information_file()
+    if sample.bintype != 'elf':
+        print("No es un archivo ELF")
+        exit(1)
 
-    # Handling Virtual machine
+
+    ######PARA ELEGIR MAQUINA PARA EL DINAMICO##########
+
+    print(sample.arch)
+    print(sample.endian)
+    print(sample.bits)
+
+    sample.sections_file()
+    sample.imports_file()
+    sample.libs_file()
+    sample.hash_file()
+    sample.get_strings()
+    sample.get_opcodes_func()
+    sample.get_ngrams()
+    sample.get_cyclomatic_complexity()
+    # Handling virtual machine
     handler = LibvirtHandler()
     domain = handler.start_guest('arm_32_little')  # TODO
 
     # SSH connection
-
-    ssh = ssh_connect("localhost", 2222, "root", "km11")
+    ssh = ssh_connect(os.getenv('MACHINE_IP'), int(os.getenv('MACHINE_PORT')), os.getenv('SSH_USER'),
+                      os.getenv('SSH_PASSWORD'))
 
     if ssh is None:
         handler.stop_guest(domain)  # Destroy virtual machine
@@ -35,12 +57,15 @@ def main():
     print(ssh)
 
     # Sample execution
-    # run_sample(ssh, localpath, remotepath)
+    localpath = "../requirements.txt"
+    remotepath = "/tmp"
+    run_sample(ssh, localpath, remotepath)
 
     handler.stop_guest(domain)  # Destroy virtual machine
     handler.shutdown()  # Close connection to qemu:///session
 
     # Dynamic analysis
+    #
 
 
 if __name__ == '__main__':

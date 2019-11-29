@@ -2,6 +2,11 @@ import r2pipe
 import json
 import base64
 
+from nltk import ngrams
+
+def get_ngrams(opcodes,n_ngram):
+	return ngrams(opcodes,n_ngram)
+
 class StaticAnalysis():
 	def __init__(self,file):
 		self.r2_handler = r2pipe.open(file)
@@ -19,7 +24,7 @@ class StaticAnalysis():
 
 			section_dic = {}
 			if 'name' in section:
-					section_dic['name'] = section['name']
+				section_dic['name'] = section['name']
 					
 			if 'entropy' in section: 
 				section_dic['entropy'] = section['entropy']
@@ -43,10 +48,41 @@ class StaticAnalysis():
 	def get_hash_file(self):
 		hashes = json.loads(self.r2_handler.cmd('itj'))
 		return hashes 
+
 	def get_data_strings(self):
 		strings = json.loads(self.r2_handler.cmd('izj'))
 		return list(map(lambda x: base64.b64decode(x['string']),strings))
-class elf:
+
+	def get_list_func(self):
+		self.r2_handler.cmd('aaa')
+		func_list= json.loads(self.r2_handler.cmd('aflj'))
+		
+		func_list = list(map(lambda x: x['name'],func_list))
+
+		return func_list
+		
+	def get_opcodes_func(self):
+		
+		func_list = self.get_list_func()
+		func_opcodes = {}
+		for func in func_list:
+			if 'imp' not in func:
+				opcodes = json.loads(self.r2_handler.cmd('s ' + func + "; pdfj"))
+				opcodes = list(filter(lambda x: 'opcode' in x,opcodes['ops']))
+				opcodes = list(map(lambda x: x['opcode'].split(' ')[0], opcodes))
+				func_opcodes[func] = opcodes
+		return func_opcodes
+
+	def get_complexity_cyclomatic(self):
+		func_list = self.get_list_func()
+		func_cc = {}
+		for func in func_list:
+			if 'imp' not in func:
+				func_cc[func] = json.loads(self.r2_handler.cmd('s ' + func + "; afCc"))
+
+		print(func_cc)
+
+class Elf:
 
 	def __init__(self,file):
 		self.static_analysis = StaticAnalysis(file)
@@ -80,9 +116,15 @@ class elf:
 		self.md5 = hashes['md5']
 		self.sha1 = hashes['sha1']
 	def get_cyclomatic_complexity(self):
-		pass
+		self.cc=self.static_analysis.get_complexity_cyclomatic()
 	def get_opcodes_func(self):
-		pass 
+		self.opcodes_func = self.static_analysis.get_opcodes_func()
+
+	def get_ngrams(self):
+		self.n_grams = []
+		for func in self.opcodes_func:
+			self.n_grams.extend(list(get_ngrams(self.opcodes_func[func],6)))
+			
 	def stadistical_bb(self):
 		pass
 	def get_strings(self):
@@ -90,26 +132,7 @@ class elf:
 		
 		
 def main():
-	file = 'PATH_PRUEBA_RAPIDA'
-	sample = elf(file)
-	sample.information_file()
-	if sample.bintype != 'elf':
-		print("No es un archivo ELF")
-		exit(1)
-
-
-	######PARA ELEGIR MAQUINA PARA EL DINAMICO##########
-
-	print(sample.arch)
-	print(sample.endian)
-	print(sample.bits)
-
-	sample.sections_file()
-	sample.imports_file()
-	sample.libs_file()
-	sample.hash_file()
-	sample.get_strings()
-	
+	pass
 if __name__ == '__main__':
     main()
 
