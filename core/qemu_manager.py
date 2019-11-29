@@ -32,20 +32,20 @@ class LibvirtHandler:
 
         if self.conn is None:
             print(colored("[X] Could not connect to qemu:///session", 'red'))
-            exit(0)
+            exit(1)
 
     def start_guest(self, arch):
         xml = get_xml(arch)
 
         if xml is None:
             print(colored("[X] XML file not found", 'red'))
-            exit(0)
+            exit(1)
 
         abs_path = convert_rel_to_abs(arch)
 
         if abs_path is None:
             print(colored("[X] Indicated architecture does not exist", 'red'))
-            exit(0)
+            exit(1)
 
         # Load .env file
         load_env_file()

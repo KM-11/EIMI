@@ -4,147 +4,134 @@ import base64
 
 from nltk import ngrams
 
-def get_ngrams(opcodes,n_ngram):
-	return ngrams(opcodes,n_ngram)
+
+def get_ngrams(opcodes, n_ngram):
+    return ngrams(opcodes, n_ngram)
+
 
 class StaticAnalysis():
-	def __init__(self,file):
-		self.r2_handler = r2pipe.open(file)
+    def __init__(self, file):
+        self.r2_handler = r2pipe.open(file)
 
-	def __del__(self):
-		self.r2_handler.quit()
+    def __del__(self):
+        self.r2_handler.quit()
 
-	def get_info_file(self):
-		return json.loads(self.r2_handler.cmd('ij')) 
+    def get_info_file(self):
+        return json.loads(self.r2_handler.cmd('ij'))
 
-	def get_sections(self):
-		sections = json.loads(self.r2_handler.cmd('iSj entropy'))['sections']
-		sections_array = [] 
-		for section in sections: 
+    def get_sections(self):
+        sections = json.loads(self.r2_handler.cmd('iSj entropy'))['sections']
+        sections_array = []
+        for section in sections:
 
-			section_dic = {}
-			if 'name' in section:
-				section_dic['name'] = section['name']
-					
-			if 'entropy' in section: 
-				section_dic['entropy'] = section['entropy']
-			if 'perm' in section:
-				section_dic['perm'] = section['perm']
-			if 'size' in section:
-				section_dic['size'] = section['size']
+            section_dic = {}
+            if 'name' in section:
+                section_dic['name'] = section['name']
 
-			sections_array.append(section_dic)
-		return sections_array
+            if 'entropy' in section:
+                section_dic['entropy'] = section['entropy']
+            if 'perm' in section:
+                section_dic['perm'] = section['perm']
+            if 'size' in section:
+                section_dic['size'] = section['size']
 
-	def get_imports(self):
-		imports = json.loads(self.r2_handler.cmd('iij'))
-		func_name_imp = list(map(lambda x: x['name'],imports))
-		return func_name_imp
-		
-	def get_libs(self):
-		libs = json.loads(self.r2_handler.cmd('ilj'))
-		return libs 
+            sections_array.append(section_dic)
+        return sections_array
 
-	def get_hash_file(self):
-		hashes = json.loads(self.r2_handler.cmd('itj'))
-		return hashes 
+    def get_imports(self):
+        imports = json.loads(self.r2_handler.cmd('iij'))
+        func_name_imp = list(map(lambda x: x['name'], imports))
+        return func_name_imp
 
-	def get_data_strings(self):
-		strings = json.loads(self.r2_handler.cmd('izj'))
-		return list(map(lambda x: base64.b64decode(x['string']),strings))
+    def get_libs(self):
+        libs = json.loads(self.r2_handler.cmd('ilj'))
+        return libs
 
-	def get_list_func(self):
-		self.r2_handler.cmd('aaa')
-		func_list= json.loads(self.r2_handler.cmd('aflj'))
-		
-		func_list = list(map(lambda x: x['name'],func_list))
+    def get_hash_file(self):
+        hashes = json.loads(self.r2_handler.cmd('itj'))
+        return hashes
 
-		return func_list
-		
-	def get_opcodes_func(self):
-		
-		func_list = self.get_list_func()
-		func_opcodes = {}
-		for func in func_list:
-			if 'imp' not in func:
-				opcodes = json.loads(self.r2_handler.cmd('s ' + func + "; pdfj"))
-				opcodes = list(filter(lambda x: 'opcode' in x,opcodes['ops']))
-				opcodes = list(map(lambda x: x['opcode'].split(' ')[0], opcodes))
-				func_opcodes[func] = opcodes
-		return func_opcodes
+    def get_data_strings(self):
+        strings = json.loads(self.r2_handler.cmd('izj'))
+        return list(map(lambda x: base64.b64decode(x['string']), strings))
 
-	def get_complexity_cyclomatic(self):
-		func_list = self.get_list_func()
-		func_cc = {}
-		for func in func_list:
-			if 'imp' not in func:
-				func_cc[func] = json.loads(self.r2_handler.cmd('s ' + func + "; afCc"))
+    def get_list_func(self):
+        self.r2_handler.cmd('aaa')
+        func_list = json.loads(self.r2_handler.cmd('aflj'))
 
-		print(func_cc)
+        func_list = list(map(lambda x: x['name'], func_list))
+
+        return func_list
+
+    def get_opcodes_func(self):
+
+        func_list = self.get_list_func()
+        func_opcodes = {}
+        for func in func_list:
+            if 'imp' not in func:
+                opcodes = json.loads(self.r2_handler.cmd('s ' + func + "; pdfj"))
+                opcodes = list(filter(lambda x: 'opcode' in x, opcodes['ops']))
+                opcodes = list(map(lambda x: x['opcode'].split(' ')[0], opcodes))
+                func_opcodes[func] = opcodes
+        return func_opcodes
+
+    def get_complexity_cyclomatic(self):
+        func_list = self.get_list_func()
+        func_cc = {}
+        for func in func_list:
+            if 'imp' not in func:
+                func_cc[func] = json.loads(self.r2_handler.cmd('s ' + func + "; afCc"))
+
+        print(func_cc)
+
 
 class Elf:
 
-	def __init__(self,file):
-		self.static_analysis = StaticAnalysis(file)
+    def __init__(self, file):
+        self.static_analysis = StaticAnalysis(file)
 
-	def information_file(self):
-		binary_info = self.static_analysis.get_info_file()	
-		if 'bin' not in binary_info:
-			print("No es un archivo EXECutable!!!!")
-			exit(1)
+    def information_file(self):
+        binary_info = self.static_analysis.get_info_file()
+        if 'bin' not in binary_info:
+            print("No es un archivo EXECutable!!!!")
+            exit(1)
 
-		self.arch = binary_info['bin']['arch']
-		self.machine = binary_info['bin']['machine']
-		self.bits = binary_info['bin']['bits']
-		self.bintype = binary_info['bin']['bintype']
-		self.compiler  = binary_info['bin']['compiler']
-		self.stripped = binary_info['bin']['stripped']
-		self.endian = binary_info['bin']['endian']
+        self.arch = binary_info['bin']['arch']
+        self.machine = binary_info['bin']['machine']
+        self.bits = binary_info['bin']['bits']
+        self.bintype = binary_info['bin']['bintype']
+        self.compiler = binary_info['bin']['compiler']
+        self.stripped = binary_info['bin']['stripped']
+        self.endian = binary_info['bin']['endian']
 
+    def sections_file(self):
+        self.sections = self.static_analysis.get_sections()
 
-	def sections_file(self):
-		self.sections = self.static_analysis.get_sections()
+    def imports_file(self):
+        self.imports = self.static_analysis.get_imports()
 
-	def imports_file(self):
-		self.imports = self.static_analysis.get_imports()
+    def libs_file(self):
+        self.libs = self.static_analysis.get_libs()
 
-	def libs_file(self):
-		self.libs = self.static_analysis.get_libs()
-	def hash_file(self):
-		hashes = self.static_analysis.get_hash_file()
-	
-		self.md5 = hashes['md5']
-		self.sha1 = hashes['sha1']
-	def get_cyclomatic_complexity(self):
-		self.cc=self.static_analysis.get_complexity_cyclomatic()
-	def get_opcodes_func(self):
-		self.opcodes_func = self.static_analysis.get_opcodes_func()
+    def hash_file(self):
+        hashes = self.static_analysis.get_hash_file()
 
-	def get_ngrams(self):
-		self.n_grams = []
-		for func in self.opcodes_func:
-			self.n_grams.extend(list(get_ngrams(self.opcodes_func[func],6)))
-			
-	def stadistical_bb(self):
-		pass
-	def get_strings(self):
-		self.strings = self.static_analysis.get_data_strings()
-		
-		
-def main():
-	pass
-if __name__ == '__main__':
-    main()
+        self.md5 = hashes['md5']
+        self.sha1 = hashes['sha1']
 
-	
+    def get_cyclomatic_complexity(self):
+        self.cc = self.static_analysis.get_complexity_cyclomatic()
 
+    def get_opcodes_func(self):
+        self.opcodes_func = self.static_analysis.get_opcodes_func()
 
-	
+    def get_ngrams(self):
+        self.n_grams = []
+        for func in self.opcodes_func:
+            self.n_grams.extend(list(get_ngrams(self.opcodes_func[func], 6)))
 
+    def stadistical_bb(self):
+        pass
 
-
-
-
-
-
-
+    def get_strings(self):
+        self.strings = self.static_analysis.get_data_strings()

@@ -1,9 +1,9 @@
 <domain type='qemu' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
-    <name>MIPS_32</name>
+    <name>MIPS_64_BIG</name>
     <memory unit='KiB'>262144</memory>
     <currentMemory unit='KiB'>262144</currentMemory>
     <os>
-        <type arch='mips' machine='malta'>hvm</type>
+        <type arch='mips64' machine='malta'>hvm</type>
         <kernel>{machine_path}vmlinux</kernel>
         <cmdline>root=/dev/hda</cmdline>
         <boot dev='hd'/>
@@ -12,7 +12,7 @@
     <on_reboot>restart</on_reboot>
     <on_crash>destroy</on_crash>
     <devices>
-        <emulator>{path_qemu}qemu-system-mips</emulator>
+        <emulator>{path_qemu}qemu-system-mips64</emulator>
         <controller type='pci' index='0' model='pci-root'/>
     </devices>
     <qemu:commandline>

@@ -4,14 +4,14 @@ from termcolor import colored
 import os
 import time
 from scp import SCPClient, SCPException
-
-CONNECTION_TIMEOUT = 30
-DEPLOY_TIMEOUT = 10
-EXECUTION_TIMEOUT = 20
+from helper import load_env_file
 
 
 def is_connection_successful(ip, port):
-    socket.setdefaulttimeout(CONNECTION_TIMEOUT)
+    # Load .env file
+    load_env_file()
+
+    socket.setdefaulttimeout(int(os.getenv('CONNECTION_TIMEOUT')))
     sock = socket.socket()
 
     success = True
@@ -34,6 +34,9 @@ def is_connection_successful(ip, port):
 
 
 def ssh_connect(ip, port, username, password):
+    # Load .env file
+    load_env_file()
+
     ssh = paramiko.SSHClient()
 
     # Set unknown hosts policy (host key is not in known hosts file)
@@ -41,11 +44,12 @@ def ssh_connect(ip, port, username, password):
 
     if is_connection_successful(ip, port):
         try:
-            time.sleep(DEPLOY_TIMEOUT)  # Timeout to deploy virtual machine and execute SSH service
-            ssh.connect(ip, port=port, username=username, password=password, timeout=CONNECTION_TIMEOUT)
+            time.sleep(int(os.getenv('DEPLOY_TIMEOUT')))  # Timeout to deploy virtual machine and execute SSH service
+            ssh.connect(ip, port=port, username=username, password=password,
+                        timeout=int(os.getenv('CONNECTION_TIMEOUT')))
         except paramiko.ssh_exception.AuthenticationException:
             print(colored("[X] SSH wrong credentials", 'red'))
-            exit(0)
+            exit(1)
 
         return ssh
 
@@ -54,25 +58,15 @@ def ssh_connect(ip, port, username, password):
 
 
 def run_sample(ssh, localpath, remotepath):
-    if not os.path.isfile(localpath):
-        print(colored("[X] Sample file not found", 'red'))
-        exit(0)
-
-    if not os.access(localpath, os.R_OK):
-        print(colored("[X] Access denied to local sample file", 'red'))
-        exit(0)
-
-    # if not os.access(localpath, os.R_OK): TODO
-    # print(colored("[X] Access denied to local sample file", 'red'))
-    # exit(0)
+    # Load .env file
+    load_env_file()
 
     # Split dir and sample file
     dirname, filename = os.path.split(localpath)
 
     # Create sample execution environment
     command = "cd " + remotepath + "; mkdir " + filename
-    print(command)
-    ssh.exec_command(command, timeout=EXECUTION_TIMEOUT)
+    ssh.exec_command(command)
 
     # Upload malware sample to virtual machine
     scp = SCPClient(ssh.get_transport())
@@ -81,16 +75,17 @@ def run_sample(ssh, localpath, remotepath):
         scp.put(localpath, remote_path=os.path.join(remotepath, filename))
     except SCPException as e:
         print(colored(e, 'red'))
-        exit(0)
+        exit(1)
 
     # Build commands to execute in VM TODO
-    command = "cd " + os.path.join(remotepath, filename) + "; strace -ff -o " + filename + " cat " + filename
-    print(command)
+    command = "cd " + os.path.join(remotepath,
+                                   filename) + "; chmod +x " + filename + "; strace -ff -o " + filename + " ./" + filename + ' & sleep ' + os.getenv(
+        'EXECUTION_TIMEOUT') + "; kill -9 $!"
 
     # Run strace in deployed virtual machine
-    ssh.exec_command(command, timeout=EXECUTION_TIMEOUT)
+    ssh.exec_command(command)
 
-    time.sleep(EXECUTION_TIMEOUT)  # Timeout to execute malware
+    time.sleep(int(os.getenv('EXECUTION_TIMEOUT')))  # Timeout to execute malware
 
     # Download strace output files
     scp.get(os.path.join(remotepath, filename), '../tmp', recursive=True)

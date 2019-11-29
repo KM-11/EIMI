@@ -1,5 +1,5 @@
 <domain type='qemu' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
-    <name>ARM_64</name>
+    <name>ARM_64_LITTLE</name>
     <memory unit='KiB'>262144</memory>
     <currentMemory unit='KiB'>262144</currentMemory>
     <cpu>
