@@ -11,7 +11,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 In order to execute the project, the following packages are needed:
 
-Frontend Packages:\
+Frontend Packages:
 
 [![django](https://img.shields.io/badge/django-2.2.7-green)](https://www.djangoproject.com/download/) 
 [![libvirt](https://img.shields.io/badge/libvirt-5.9.0-green)](https://libvirt.org/sources/python/)
@@ -22,7 +22,7 @@ Frontend Packages:\
 [![scp](https://img.shields.io/badge/scp-0.13.2-green)](https://github.com/jbardin/scp.py)
 [![nltk](https://img.shields.io/badge/nltk-3.4.5-green)](http://www.nltk.org/install.html)
 
-Backend Packages: \
+Backend Packages:
 
 [![fortawesome](https://img.shields.io/badge/fortawesome-5.11.2-yellowgreen)](https://fontawesome.com/download)
 [![animate](https://img.shields.io/badge/animate-1.0.0-yellowgreen)](https://www.npmjs.com/package/animate)
