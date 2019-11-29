@@ -32,7 +32,7 @@ class Muestra(models.Model):
     Vmachine_dst = models.ForeignKey(Vmachine,null=True,on_delete=models.SET_NULL)
     architecture = models.CharField(max_length=30, default="arm_32")
     analisis = models.CharField(max_length=200)
-    familia = models.ForeignKey(Familia, null=True, on_delete=models.SET_NULL)
+    familia = models.ForeignKey(Familia, null=True, on_delete=models.SET_NULL,related_name='familyid')
     date = models.DateField(default=datetime.date.today)
     def __str__(self):
         if self.name is not None:
