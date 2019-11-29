@@ -1,6 +1,8 @@
 from django.shortcuts import render
-from .models import Muestra
+from .models import Muestra, Familia
 from django.db.models import Count
+from django.http import HttpResponse
+
 # Create your views here.
 
 
@@ -21,3 +23,11 @@ def sample_detail(request, muestra_hash):
     muestra=Muestra.objects.get(hash=muestra_hash)
     context = {'muestra': muestra}
     return render(request, 'web/sample_detail.html', context)
+
+def family_detail(request, familia_id):
+    #print(str(muestra_familia_id))
+    #return HttpResponse(str(muestra_familia_id))
+    #family= Muestra.familyid.all()
+    family= Familia.objects.get(id=familia_id)
+    context = {'family': family}
+    return render(request, 'web/family_detail.html', context)
