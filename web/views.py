@@ -29,5 +29,7 @@ def family_detail(request, familia_id):
     #return HttpResponse(str(muestra_familia_id))
     #family= Muestra.familyid.all()
     family= Familia.objects.get(id=familia_id)
-    context = {'family': family}
+    muestras=Muestra.objects.get(familia_id=familia_id)
+    context = {'family': family,
+               'muestras':muestras}
     return render(request, 'web/family_detail.html', context)
