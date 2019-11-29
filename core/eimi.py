@@ -89,6 +89,8 @@ def main():
     ########################
     ### Dynamic analysis ###
     ########################
+    sysc = syscall_parser("tmp/" + hash + "/")
+    print(colored("[+] Done!", 'green'))
 
 
 if __name__ == '__main__':

@@ -6,8 +6,9 @@ def syscall_parser(ruta):
     full_syscalls = []
     rutas=glob.glob(ruta+"/*")
     for file in rutas:
-        with open(file,"r") as f:
-            full_syscalls.append(single_syscall_parser(f.readlines()))
+        if "." in file:
+            with open(file,"r") as f:
+                full_syscalls.append(single_syscall_parser(f.readlines()))
     return full_syscalls
 
 
