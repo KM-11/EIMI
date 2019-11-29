@@ -4,6 +4,7 @@ from qemu_manager import LibvirtHandler
 from connection_handler import *
 import os
 from static_analyzer import Elf
+from datetime import date
 from web.models import Muestra
 import json
 
@@ -103,7 +104,8 @@ def main():
     dynamic_info=str(dynamic_info)
 
     # ("hash", "nombre", "dinamico", None, None, "Arquitectura", "estatico", date.today())
-    helper.add_to_muestra()
+    to_db(sample.md5,None,dynamic_info,None,None,sample_info,date.today())
+    helper.add_to_muestra(to_db)
     #dynamic_info=str(dynamic_info).replace("'", "\"")
     #sample_info = json.loads(sample_info)
     #dynamic_info=json.loads(dynamic_info)

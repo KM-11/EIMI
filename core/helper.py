@@ -31,5 +31,6 @@ def add_to_muestra(tupla_args): #la tupla de be ser saneada antes de entrar a la
 
 		# count = cursor.execute(sqlite_insert_query)
 		sqliteConnection.commit()
+		sqliteConnection.close()
 	except sqlite3.Error as error:
 		print("Failed to insert data into sqlite table", error)
