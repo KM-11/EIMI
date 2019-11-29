@@ -39,6 +39,10 @@ Paquetes Backend:
 
 ## Ejecución
 
+## Registro de Cambios
+
+Los cambios más relevantes sufridos por el proyecto se encuentran disponibles en [CHANGELOG_ES.md](https://github.com/KM-11/EIMI/blob/master/CHANGELOG_ES.md).
+
 ## Contribuir
 
 En el archivo [CONTRIBUIR.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) puedes encontrar detalles sobre cómo realizar contribuciones al proyecto.
@@ -59,6 +63,6 @@ Este proyecto está publicado bajo licencia GNU General Public License. Para má
 
 ## Referencias
 
-E. Cozzi, M. Graziano, Y. Fratantonio and D. Balzarotti, "Understanding Linux Malware," 2018 IEEE Symposium on Security and Privacy (SP), San Francisco, CA, 2018, pp. 161-175.
-(http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8418602&isnumber=8418583) \
-PurpleBooth Ltd. (https://purplebooth.co.uk/)
+E. Cozzi, M. Graziano, Y. Fratantonio and D. Balzarotti, "Understanding Linux Malware," 2018 IEEE Symposium on Security and Privacy (SP), San Francisco, CA, 2018, pp. 161-175.\
+PurpleBooth Ltd. (https://purplebooth.co.uk/)\
+Keep a Changelog (https://keepachangelog.com/en/1.0.0/)

@@ -1,10 +1,14 @@
-from helper import load_env_file
+from helper import load_env_file, add_to_muestra
 from optparse import OptionParser
 from qemu_manager import LibvirtHandler
 from connection_handler import *
 import os
 from static_analyzer import Elf
 from concurrent.futures import ThreadPoolExecutor
+from datetime import date
+from web.models import Muestra
+import json
+
 
 
 def pipeline(sample_path, options):
@@ -127,6 +131,22 @@ def main():
         # Execute pipeline
         if not error:
             pipeline(arg, options)
+
+    ########################
+    ###   Sample to db   ###
+    ########################
+    sample_info=str(sample.dump_todict())
+    #sample_info = sample_info.replace("'", "\"")
+    dynamic_info = {"syscalls":sysc}
+    dynamic_info=str(dynamic_info)
+
+    # ("hash", "nombre", "dinamico", None, None, "Arquitectura", "estatico", date.today())
+    to_db(sample.md5,None,dynamic_info,None,None,sample_info,date.today())
+    helper.add_to_muestra(to_db)
+    #dynamic_info=str(dynamic_info).replace("'", "\"")
+    #sample_info = json.loads(sample_info)
+    #dynamic_info=json.loads(dynamic_info)
+
 
 
 if __name__ == '__main__':

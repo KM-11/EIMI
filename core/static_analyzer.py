@@ -1,13 +1,42 @@
 import r2pipe
 import json
 import base64
-
+import math
 from nltk import ngrams
+import functools 
 
 
 def get_ngrams(opcodes, n_ngram):
     return ngrams(opcodes, n_ngram)
 
+
+def get_num_func_cc(a):
+    func_a = {}
+    if a is not None:
+        for i in a:
+            try:
+                func_a[a[i]] +=1
+            except:
+                func_a[a[i]] = 1
+        return func_a
+    return None
+
+def structural_similarity(a,b):
+    sample_a = get_num_func_cc(a)
+    sample_b = get_num_func_cc(b)
+
+    distance = []
+    if sample_a is not None and sample_b is not None:
+        for i in sample_a:
+            if i in sample_b:
+                distance.append(min(sample_a[i],sample_b[i])/max(sample_a[i],sample_b[i]))
+
+        for i in sample_b:
+            if i not in sample_a:
+                distance.append(0)
+
+        return (functools.reduce(lambda a,b: a+b,distance)/len(distance))*100
+    return 0
 
 class StaticAnalysis():
     def __init__(self, file):
@@ -27,7 +56,6 @@ class StaticAnalysis():
             section_dic = {}
             if 'name' in section:
                 section_dic['name'] = section['name']
-
             if 'entropy' in section:
                 section_dic['entropy'] = section['entropy']
             if 'perm' in section:
@@ -81,14 +109,29 @@ class StaticAnalysis():
         for func in func_list:
             if 'imp' not in func:
                 func_cc[func] = json.loads(self.r2_handler.cmd('s ' + func + "; afCc"))
-
-        print(func_cc)
+        return func_cc
+        
 
 
 class Elf:
 
     def __init__(self, file):
         self.static_analysis = StaticAnalysis(file)
+        self.arch = None
+        self.machine = None
+        self.bits = None
+        self.bintype = None
+        self.compiler = None
+        self.stripped = None
+        self.endian = None
+        self.sections = None
+        self.imports = None
+        self.libs = None
+        self.md5 = None
+        self.sha1 = None
+        self.cc = None
+        self.opcodes_func = None
+        self.n_grams = None
 
     def information_file(self):
         binary_info = self.static_analysis.get_info_file()
@@ -135,3 +178,23 @@ class Elf:
 
     def get_strings(self):
         self.strings = self.static_analysis.get_data_strings()
+
+    def dump_to_dict(self):
+        elf_dict = dict()
+        elf_dict['arch'] = self.arch 
+        elf_dict['machine'] = self.machine
+        elf_dict['bits'] = self.bits
+        elf_dict['bintype'] = self.bintype
+        elf_dict['compiler'] = self.compiler
+        elf_dict['stripped'] = self.stripped
+        elf_dict['endian'] = self.endian
+        elf_dict['sections'] = self.sections
+        elf_dict['imports'] = self.imports
+        elf_dict['libs'] = self.libs
+        elf_dict['md5'] = self.md5
+        elf_dict['sha1'] = self.sha1
+        elf_dict['cc'] = self.cc
+        elf_dict['opcodes_func'] = self.opcodes_func
+        elf_dict['n_grams'] = self.n_grams
+        return elf_dict
+
