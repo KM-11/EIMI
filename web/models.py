@@ -28,10 +28,10 @@ class Vmachine(models.Model):
 class Muestra(models.Model):
     hash = models.CharField(max_length=50, primary_key=True)
     name = models.CharField(max_length=50, null=True)
-    instancePath = models.CharField(max_length=200)
     Vmachine_dst = models.ForeignKey(Vmachine,null=True,on_delete=models.SET_NULL)
     architecture = models.CharField(max_length=30, default="arm_32")
-    analisis = models.CharField(max_length=200)
+    analisis =models.TextField(blank = True)
+    static_anal = models.TextField(blank = True)
     familia = models.ForeignKey(Familia, null=True, on_delete=models.SET_NULL,related_name='familyid')
     date = models.DateField(default=datetime.date.today)
     def __str__(self):
