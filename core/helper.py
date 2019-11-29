@@ -1,6 +1,6 @@
 import dotenv
 from pathlib import Path
-import re 
+import re
 import ipaddress
 import sqlite3
 from datetime import date
@@ -15,7 +15,7 @@ def is_ip_valid(ip):
 		return True
 	except:
 		return False
-		
+
 def find_ip_address(data):
 	pattern = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 	matches = re.findall(pattern,data)
