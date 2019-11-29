@@ -17,7 +17,10 @@ def look_write_files(syscall_traza):
     suspects_file = open(os.getenv('SUSPECT_FILES_PATH'),"r")
     detects=[]
     for tup in suspects_file.readlines():
-       detects.append( tup.rstrip().split(",")[0],tup.rstrip().split(",")[1])
+        try:
+            detects.append( tup.rstrip().split(",")[0],tup.rstrip().split(",")[1])
+        except IndexError:
+            print("Error de formato")
     resultcount=[]
     counter=0
     for i in detects:

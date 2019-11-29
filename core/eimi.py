@@ -1,5 +1,6 @@
 from helper import load_env_file
 from optparse import OptionParser
+from parser import syscall_parser
 from qemu_manager import LibvirtHandler
 from connection_handler import *
 import os
@@ -89,7 +90,7 @@ def main():
     ########################
     ### Dynamic analysis ###
     ########################
-
+    sysc = syscall_parser("tmp/"+hash+"/")
 
 if __name__ == '__main__':
     main()
