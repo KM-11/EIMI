@@ -267,7 +267,8 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/linux,macos,python,pycharm,windows
 
-# Custom
+# EIMI project
 static/node_modules
 static/package-lock.json
 tmp/*
+secret/*

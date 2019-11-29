@@ -33,7 +33,7 @@ def is_connection_successful(ip, port):
     return success
 
 
-def ssh_connect(ip, port, username, password):
+def ssh_connect(ip, port, username, password, private_key):
     # Load .env file
     load_env_file()
 
@@ -48,11 +48,21 @@ def ssh_connect(ip, port, username, password):
 
             print(colored("[+] Connecting to virtual machine via SSH", 'green'))
 
-            ssh.connect(ip, port=port, username=username, password=password,
-                        timeout=int(os.getenv('CONNECTION_TIMEOUT')))
+            if private_key is None:
+                # User and password login
+                ssh.connect(ip, port=port, username=username, password=password,
+                            timeout=int(os.getenv('CONNECTION_TIMEOUT')))
+            else:
+                # Private key login
+                ssh.connect(ip, port=port, username=username, key_filename=private_key,
+                            timeout=int(os.getenv('CONNECTION_TIMEOUT')))
         except paramiko.ssh_exception.AuthenticationException:
             print(colored("[X] SSH wrong credentials", 'red'))
-            exit(1)
+            return None
+
+        except paramiko.ssh_exception.SSHException as e:
+            print(colored('[X] ' + str(e).capitalize(), 'red'))
+            return None
 
         return ssh
 
@@ -73,15 +83,10 @@ def run_sample(ssh, localpath, remotepath):
 
     # Upload malware sample to virtual machine
     scp = SCPClient(ssh.get_transport())
+    print(colored("[+] Uploading sample to virtual machine", 'green'))
+    scp.put(localpath, remote_path=os.path.join(remotepath, filename))
 
-    try:
-        print(colored("[+] Uploading sample to virtual machine", 'green'))
-        scp.put(localpath, remote_path=os.path.join(remotepath, filename))
-    except SCPException as e:
-        print(colored(e, 'red'))
-        exit(1)
-
-    # Build commands to execute in VM TODO
+    # Build commands to execute in VM
     command = "cd " + os.path.join(remotepath, filename) + "; chmod +x " + filename + "; strace -ff -o " \
               + filename + " ./" + filename + ' & sleep ' + os.getenv('EXECUTION_TIMEOUT') + "; kill -9 $!"
 
@@ -92,6 +97,9 @@ def run_sample(ssh, localpath, remotepath):
     time.sleep(int(os.getenv('EXECUTION_TIMEOUT')))  # Timeout to execute malware
 
     # Download strace output files
+    if not os.path.isdir('../tmp'):
+        os.mkdir('../tmp')
+
     print(colored(
         "[+] Downloading sample execution results in " + os.path.dirname(
             os.path.abspath('../' + __file__)) + '/tmp/' + filename, 'green'))

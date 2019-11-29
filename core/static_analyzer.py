@@ -94,7 +94,7 @@ class Elf:
         binary_info = self.static_analysis.get_info_file()
         if 'bin' not in binary_info:
             print("No es un archivo EXECutable!!!!")
-            exit(1)
+            return
 
         self.arch = binary_info['bin']['arch']
         self.machine = binary_info['bin']['machine']
