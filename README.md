@@ -1,5 +1,7 @@
 # EIMI
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/KM-11/EIMI.svg)](https://greenkeeper.io/)
+
 EIMI is a multiarchitecture platform designed for IoT malware execution, characterization and classification.
 
 ## Getting Started
