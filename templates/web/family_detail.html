@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+   {% if family  %}
+
+       {{muestras}}
+   {% endif %}
+
+<div id="div_basicResize"></div>
+<script src="/static/node_modules/d3/dist/d3.min.js"></script>
+<script src="/static/node_modules/d3-scale-chromatic/dist/d3-scale-chromatic.min.js"></script>
+<script>
+
+// Initialize a SVG area. We know the height but NOT the width
+var Svg = d3.select("#div_basicResize")
+  .append("svg")
+  .attr("height", 200)
+
+// Create dummy data
+var data = [19, 13, 54, 78, 98, 120, 138]
+
+// Add X axis. Note that we don't know the range yet, so we cannot draw it.
+var x = d3.scaleLinear()
+  .domain([0, 150])
+var xAxis = Svg.append("g")
+  .attr("transform", "translate(0,150)")
+
+var Tooltip = d3.select("#div_basicResize")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "2px")
+    .style("border-radius", "5px")
+    .style("padding", "5px")
+
+ var mouseover = function(d) {
+    Tooltip
+      .style("opacity", 1)
+     .html("The exact value of<br>this cell is: </br>")
+    d3.select(this)
+      .style("stroke", "black")
+      .style("opacity", 1)
+     .html("The exact value of<br>this cell is: </br>")
+  }
+    var mousemove = function(d) {
+    Tooltip
+      .html("The exact value of<br>this cell is: ")
+
+      .style("left", (d3.mouse(this)[0]+70) + "px")
+      .style("top", (d3.mouse(this)[1]) + "px")
+  }
+  var mouseleave = function(d) {
+    Tooltip
+      .style("opacity", 0)
+    d3.select(this)
+      .style("stroke", "none")
+      .style("opacity", 0.8)
+      .text("I'm a circle!")
+  }
+
+    var clickfunc = function(d) {
+    Tooltip
+        .html("The exact value of<br>this cell is: ")
+      .style("opacity", 0)
+    d3.select(this)
+      .style("stroke", "none")
+      .style("opacity", 0.8)
+      .html("The exact value of<br>this cell is: </br>")
+        window.location.replace("http://www.w3schools.com");
+        d3.event.stopPropagation();
+
+  }
+// Initialize circles. Note that the X scale is not available yet, so we cannot draw them
+var myColor = d3.scaleSequential().domain([1,150])
+  .interpolator(d3.interpolateRdYlGn);
+//svg.selectAll(".firstrow").data(data).enter().append("circle").attr("cx", function(d,i){return 30 + i*60}).attr("cy", 50).attr("r", 19).attr("fill", function(d){return myColor(d) })
+
+
+var myCircles = Svg
+  .selectAll("circles")
+  .data(data)
+  .enter()
+  .append("circle")
+
+    .attr("r", 20)
+    .attr("cy", 100)
+.attr("fill", function(d){return myColor(d) })
+
+
+
+
+// A function that finishes to draw the chart for a specific device size.
+function drawChart() {
+
+  // get the current width of the div where the chart appear, and attribute it to Svg
+  currentWidth = parseInt(d3.select('#div_basicResize').style('width'), 10)
+  Svg.attr("width", currentWidth)
+
+  // Update the X scale and Axis (here the 20 is just to have a bit of margin)
+  x.range([ 20, currentWidth-20 ]);
+  xAxis.call(d3.axisBottom(x))
+
+  //Add the last information needed for the circles: their X position
+  myCircles
+    .attr("cx", function(d){ return x(d)})
+    .on("mouseover", mouseover)
+     .on("mousemove", mousemove)
+    .on("mouseleave", mouseleave)
+    .on("click",clickfunc)
+  }
+
+
+
+// Initialize the chart
+drawChart()
+
+// Add an event listener that run the function when dimension change
+window.addEventListener('resize', drawChart );
+
+
+</script>
+</body>
+</html>
