@@ -20,17 +20,12 @@ def main():
         exit(1)
 
     if not os.path.isfile(args[0]):
-        print(args[0])
         print(colored("[X] Sample file not found", 'red'))
         exit(1)
 
     if not os.access(args[0], os.R_OK):
         print(colored("[X] Access denied to local sample file", 'red'))
         exit(1)
-
-    # Split dir and sample file
-    dirname, filename = os.path.split(args[0])
-    print(colored("[+] Analyzing sample: " + filename, 'green'))
 
     #######################
     ### Static analysis ###
@@ -70,7 +65,6 @@ def main():
     ### Handling virtual machine ###
     ################################
     handler = LibvirtHandler()
-    print(colored("[+] Starting '" + vm_guest + "' virtual machine...", 'green'))
     domain = handler.start_guest(vm_guest)
 
     ######################
@@ -80,7 +74,6 @@ def main():
                       os.getenv('SSH_PASSWORD'))
 
     if ssh is None:
-        print(colored("[+] Shutting down '" + vm_guest + "' virtual machine", 'green'))
         handler.stop_guest(domain)  # Destroy virtual machine
         handler.shutdown()  # Close connection to qemu:///session
         exit(1)
@@ -90,13 +83,13 @@ def main():
     ########################
     run_sample(ssh, args[0], os.getenv('MACHINE_REMOTEPATH'))
 
-    print(colored("[+] Destroying '" + vm_guest + "' virtual machine", 'green'))
     handler.stop_guest(domain)  # Destroy virtual machine
     handler.shutdown()  # Close connection to qemu:///session
 
     ########################
     ### Dynamic analysis ###
     ########################
+    sysc = syscall_parser("tmp/" + hash + "/")
     print(colored("[+] Done!", 'green'))
 
 
