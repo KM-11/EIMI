@@ -20,7 +20,27 @@ def main():
 
     # Static analysis
     #
+    sample = Elf(file)
+    sample.information_file()
+    if sample.bintype != 'elf':
+        print("No es un archivo ELF")
+        exit(1)
 
+
+    ######PARA ELEGIR MAQUINA PARA EL DINAMICO##########
+
+    print(sample.arch)
+    print(sample.endian)
+    print(sample.bits)
+
+    sample.sections_file()
+    sample.imports_file()
+    sample.libs_file()
+    sample.hash_file()
+    sample.get_strings()
+    sample.get_opcodes_func()
+    sample.get_ngrams()
+    sample.get_cyclomatic_complexity()
     # Handling virtual machine
     handler = LibvirtHandler()
     domain = handler.start_guest('arm_32_little')  # TODO
