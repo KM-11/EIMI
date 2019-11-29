@@ -45,6 +45,9 @@ def ssh_connect(ip, port, username, password):
     if is_connection_successful(ip, port):
         try:
             time.sleep(int(os.getenv('DEPLOY_TIMEOUT')))  # Timeout to deploy virtual machine and execute SSH service
+
+            print(colored("[+] Connecting to virtual machine via SSH", 'green'))
+
             ssh.connect(ip, port=port, username=username, password=password,
                         timeout=int(os.getenv('CONNECTION_TIMEOUT')))
         except paramiko.ssh_exception.AuthenticationException:
@@ -72,22 +75,26 @@ def run_sample(ssh, localpath, remotepath):
     scp = SCPClient(ssh.get_transport())
 
     try:
+        print(colored("[+] Uploading sample to virtual machine", 'green'))
         scp.put(localpath, remote_path=os.path.join(remotepath, filename))
     except SCPException as e:
         print(colored(e, 'red'))
         exit(1)
 
     # Build commands to execute in VM TODO
-    command = "cd " + os.path.join(remotepath,
-                                   filename) + "; chmod +x " + filename + "; strace -ff -o " + filename + " ./" + filename + ' & sleep ' + os.getenv(
-        'EXECUTION_TIMEOUT') + "; kill -9 $!"
+    command = "cd " + os.path.join(remotepath, filename) + "; chmod +x " + filename + "; strace -ff -o " \
+              + filename + " ./" + filename + ' & sleep ' + os.getenv('EXECUTION_TIMEOUT') + "; kill -9 $!"
 
     # Run strace in deployed virtual machine
     ssh.exec_command(command)
 
+    print(colored("[+] Executing sample... (" + os.getenv('EXECUTION_TIMEOUT') + " secs)", 'green'))
     time.sleep(int(os.getenv('EXECUTION_TIMEOUT')))  # Timeout to execute malware
 
     # Download strace output files
+    print(colored(
+        "[+] Downloading sample execution results in " + os.path.dirname(
+            os.path.abspath('../' + __file__)) + '/tmp/' + filename, 'green'))
     scp.get(os.path.join(remotepath, filename), '../tmp', recursive=True)
 
     scp.close()
