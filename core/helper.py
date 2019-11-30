@@ -5,6 +5,7 @@ import ipaddress
 import sqlite3
 from datetime import date
 from termcolor import colored
+import json
 
 
 def load_env_file():
@@ -40,3 +41,33 @@ def store_static_fields(tuple_args):
         sqliteConnection.close()
     except sqlite3.Error as error:
         print(colored("[X] Failed to insert data into sqlite table: " + str(error).lower(), 'red'))
+
+
+def get_data_bbdd(field, hash, table, mode):
+    try:
+        # Connection
+        sqliteConnection = sqlite3.connect('../db.sqlite3')
+        cursor = sqliteConnection.cursor()
+
+        result = []
+
+        # Execute query
+        cursor.execute('SELECT ' + field + ' FROM ' + table + ' WHERE hash = "' + hash + '";')
+
+        # Parse
+        sample_data = cursor.fetchall()
+
+        for i in sample_data:
+            print(i[0].replace("'", "\""))
+            exit(1)
+
+        # Commit changes and close the connection
+        sqliteConnection.commit()
+        sqliteConnection.close()
+        print(result)
+        return result
+    except sqlite3.Error as error:
+        print(colored("[X] Failed to insert data into sqlite table: " + str(error).lower(), 'red'))
+
+
+#get_data_bbdd('static_anal', '47e8f92ae8f428300b630ed62599203a', 'web_muestra', 'n_grams')

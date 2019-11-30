@@ -144,7 +144,7 @@ class Elf:
         self.bits = binary_info['bin']['bits']
         self.bintype = binary_info['bin']['bintype']
         self.compiler = binary_info['bin']['compiler']
-        self.stripped = binary_info['bin']['stripped']
+        self.stripped = ''#binary_info['bin']['stripped']
         self.endian = binary_info['bin']['endian']
 
     def sections_file(self):
@@ -186,7 +186,7 @@ class Elf:
         elf_dict['bits'] = self.bits
         elf_dict['bintype'] = self.bintype
         elf_dict['compiler'] = self.compiler
-        elf_dict['stripped'] = self.stripped
+        # elf_dict['stripped'] = self.stripped
         elf_dict['endian'] = self.endian
         elf_dict['sections'] = self.sections
         elf_dict['imports'] = self.imports
@@ -195,6 +195,6 @@ class Elf:
         elf_dict['sha1'] = self.sha1
         elf_dict['cc'] = self.cc
         elf_dict['opcodes_func'] = self.opcodes_func
-        elf_dict['n_grams'] = self.n_grams
+        # elf_dict['n_grams'] = self.n_grams
         return elf_dict
 

@@ -47,7 +47,7 @@ def pipeline(sample_path, sample_name, options):
     sample.get_cyclomatic_complexity()
 
     # Parse above fields into dictionary
-    sample_info = sample.dump_to_dict()
+    sample_info = json.dumps(sample.dump_to_dict())
 
     ################################
     ### Handling virtual machine ###
@@ -87,10 +87,10 @@ def pipeline(sample_path, sample_name, options):
     syscalls = syscall_parser("../tmp/" + sample_name)  # Dynamic data
 
     ########################
-    ### Dynamic analysis ###
+    ### Database queries ###
     ########################
     print(colored("[+] Storing analysis results into database", 'green'))
-    db_fields = (sample.md5, sample_name, str(syscalls), None, None, vm_guest, str(sample_info), date.today())
+    db_fields = (sample.md5, sample_name, str(syscalls), None, None, vm_guest, sample_info, date.today())
     store_static_fields(db_fields)
 
     # End of pipeline
