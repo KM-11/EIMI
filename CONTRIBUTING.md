@@ -2,7 +2,7 @@
 
 This file describes the recommended actions to be followed when submitting a contribution for EIMI.
 
-## How to contribute
+## How to Contribute
 
 * Clone the repository on GitHub from the master branch.
 * When inserting new code, make sure that it is properly described and follows the style of the original files. Do not skimp on writing comments explaining the developed code.
@@ -23,7 +23,7 @@ In order for the developers to be able to properly address the issues, please be
 * since EIMI is supported in multiple architectures, provide details regarding the machine in which the bug originated.
 * attaching elements such as screenshots or logs may be helpful to determine the origin of the problem. 
 
-## Additional resources
+## Additional Resources
 
 * [README.md](https://github.com/KM-11/EIMI/blob/master/README.md)
 * [CONTRIBUTORS.md](https://github.com/KM-11/EIMI/blob/master/CONTRIBUTORS.md)

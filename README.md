@@ -2,7 +2,8 @@
 
 EIMI is a multiarchitecture platform designed for IoT malware execution, characterization and classification. 
 
-The spansih version  of this README can be found in [LÉEME.md](https://github.com/KM-11/EIMI/blob/master/README_ES.md). 
+The spanish version of this README can be found in [LÉEME.md](https://github.com/KM-11/EIMI/blob/master/README_ES.md). 
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine. 
@@ -39,6 +40,10 @@ Backend Packages:
 
 ## Execution
 
+## Changelog
+
+The relevant changes of the project are available in [CHANGELOG.md](https://github.com/KM-11/EIMI/blob/master/CHANGELOG.md).
+
 ## Contributing
 
 Please read [CONTRIBUTING.md](https://github.com/KM-11/EIMI/blob/master/CONTRIBUTING.md) for details on the process for submitting pull requests to us.
@@ -64,4 +69,5 @@ This project is licensed under the GNU General Public License. For more informat
 ## References
 
 E. Cozzi, M. Graziano, Y. Fratantonio and D. Balzarotti, "Understanding Linux Malware," 2018 IEEE Symposium on Security and Privacy (SP), San Francisco, CA, 2018, pp. 161-175.\
-PurpleBooth Ltd. (https://purplebooth.co.uk/)
+PurpleBooth Ltd. (https://purplebooth.co.uk/) \
+Keep a Changelog (https://keepachangelog.com/en/1.0.0/)
