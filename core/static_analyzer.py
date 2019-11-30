@@ -9,16 +9,22 @@ import functools
 def get_ngrams(opcodes, n_ngram):
     return ngrams(opcodes, n_ngram)
 
+def jaccard_index(a,b):
+    if a != None and b != None:
+      
+        return float(len(set(a).intersection(b)))/len(set(a).union(b))*100
+    else:
+        return 0
 
-def get_num_func_cc(a):
-    func_a = {}
-    if a is not None:
-        for i in a:
+def get_num_func_cc(func_dict_cc):
+    func_cc_count = {}
+    if func_dict_cc is not None:
+        for i in func_dict_cc:
             try:
-                func_a[a[i]] +=1
+                func_cc_count[func_dict_cc[i]] +=1
             except:
-                func_a[a[i]] = 1
-        return func_a
+                func_cc_count[func_dict_cc[i]] = 1
+        return func_cc_count
     return None
 
 def structural_similarity(a,b):
@@ -84,11 +90,13 @@ class StaticAnalysis():
         return list(map(lambda x: base64.b64decode(x['string']), strings))
 
     def get_list_func(self):
-        self.r2_handler.cmd('aaa')
-        func_list = json.loads(self.r2_handler.cmd('aflj'))
+        try:
+            self.r2_handler.cmd('aaa')
+            func_list = json.loads(self.r2_handler.cmd('aflj'))
 
-        func_list = list(map(lambda x: x['name'], func_list))
-
+            func_list = list(map(lambda x: x['name'], func_list))
+        except:
+            pass
         return func_list
 
     def get_opcodes_func(self):
@@ -97,10 +105,13 @@ class StaticAnalysis():
         func_opcodes = {}
         for func in func_list:
             if 'imp' not in func:
-                opcodes = json.loads(self.r2_handler.cmd('s ' + func + "; pdfj"))
-                opcodes = list(filter(lambda x: 'opcode' in x, opcodes['ops']))
-                opcodes = list(map(lambda x: x['opcode'].split(' ')[0], opcodes))
-                func_opcodes[func] = opcodes
+                try:
+                    opcodes = json.loads(self.r2_handler.cmd('s ' + func + "; pdfj"))
+                    opcodes = list(filter(lambda x: 'opcode' in x, opcodes['ops']))
+                    opcodes = list(map(lambda x: x['opcode'].split(' ')[0], opcodes))
+                    func_opcodes[func] = opcodes
+                except:
+                    pass
         return func_opcodes
 
     def get_complexity_cyclomatic(self):
@@ -108,7 +119,10 @@ class StaticAnalysis():
         func_cc = {}
         for func in func_list:
             if 'imp' not in func:
-                func_cc[func] = json.loads(self.r2_handler.cmd('s ' + func + "; afCc"))
+                try:
+                    func_cc[func] = json.loads(self.r2_handler.cmd('s ' + func + "; afCc"))
+                except:
+                    pass
         return func_cc
         
 

@@ -36,9 +36,11 @@ Backend Packages:
 [![perfect-scrollbar](https://img.shields.io/badge/perfect--scrollbar-1.4.0-yellowgreen)](https://github.com/mdbootstrap/perfect-scrollbar)
 [![select2](https://img.shields.io/badge/select2-4.0.12-yellowgreen)](https://github.com/select2/select2)
 
-## Installation
-
 ## Execution
+
+To execute the platform, the following command mut be run:
+
+`python3 eimi.py -r on|off <sample>`
 
 ## Changelog
 
