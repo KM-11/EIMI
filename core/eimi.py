@@ -104,7 +104,7 @@ def main():
     dynamic_info=str(dynamic_info)
 
     # ("hash", "nombre", "dinamico", None, None, "Arquitectura", "estatico", date.today())
-    to_db(sample.md5,None,dynamic_info,None,None,sample_info,date.today())
+    to_db=(sample.md5,None,dynamic_info,None,None,sample_info,date.today())
     helper.add_to_muestra(to_db)
     #dynamic_info=str(dynamic_info).replace("'", "\"")
     #sample_info = json.loads(sample_info)

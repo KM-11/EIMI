@@ -7,7 +7,12 @@ from django.http import HttpResponse
 
 
 def index(request):
-    return render(request, 'tables.html')
+    cuenta_familia = Muestra.objects.all().values('familia').annotate(total=Count('familia')).order_by('total')
+
+    latest_muestra_list = Muestra.objects.order_by('-date')[:5]
+    context = {'latest_muestra_list': latest_muestra_list,
+               'cuenta_familia': cuenta_familia}
+    return render(request, 'web/tables.html',context)
 
 
 def samples_detail(request):
@@ -28,8 +33,9 @@ def family_detail(request, familia_id):
     #print(str(muestra_familia_id))
     #return HttpResponse(str(muestra_familia_id))
     #family= Muestra.familyid.all()
-    family= Familia.objects.get(id=familia_id)
-    muestras=Muestra.objects.get(familia_id=familia_id)
+    family = Familia.objects.get(id=familia_id)
+    muestras = Muestra.objects.filter(familia_id=familia_id)
+
     context = {'family': family,
-               'muestras':muestras}
-    return render(request, 'web/family_detail.html', context)
+               'muestras': muestras}
+    return render(request, 'web/family_detail.html')
