@@ -271,3 +271,5 @@ $RECYCLE.BIN/
 static/node_modules
 static/package-lock.json
 tmp/*
+secret/*
+integra_din.ipynb

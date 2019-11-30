@@ -16,7 +16,7 @@ class Architecture (models.Model):
 class Vmachine(models.Model):
     name = models.CharField(max_length=50, null=True)
     littleEndian = models.BooleanField(null=True, default=True)
-    instancePath = models.CharField(max_length=50)
+    instancePath = models.CharField(max_length=50,null=True)
     architecture = models.ForeignKey(Architecture, null=True, on_delete=models.SET_NULL)
     create_date = models.DateField(null=True)
     def __str__(self):
@@ -28,12 +28,12 @@ class Vmachine(models.Model):
 class Muestra(models.Model):
     hash = models.CharField(max_length=50, primary_key=True)
     name = models.CharField(max_length=50, null=True)
-    instancePath = models.CharField(max_length=200)
     Vmachine_dst = models.ForeignKey(Vmachine,null=True,on_delete=models.SET_NULL)
-    architecture = models.CharField(max_length=30, default="arm_32")
-    analisis = models.CharField(max_length=200)
-    familia = models.ForeignKey(Familia, null=True, on_delete=models.SET_NULL,related_name='familyid')
-    date = models.DateField(default=datetime.date.today)
+    architecture = models.CharField(max_length=30, default="arm_32",null=True)
+    analisis =models.TextField(blank = True,null=True)
+    static_anal = models.TextField(blank = True,null=True)
+    familia = models.ForeignKey(Familia, null=True, on_delete=models.SET_NULL)
+    date = models.DateField(default=datetime.date.today,null=True)
     def __str__(self):
         if self.name is not None:
             return self.name

@@ -24,7 +24,7 @@
         <qemu:arg value='-net'/>
         <qemu:arg value='nic,model=lan9118'/>
         <qemu:arg value='-net'/>
-        <qemu:arg value='user,restrict=on,hostfwd=tcp:127.0.0.1:2222-:65111'/>
+        <qemu:arg value='user,restrict={restrict_mode},hostfwd=tcp:127.0.0.1:2222-:65111'/>
         <qemu:arg value='-snapshot'/>
     </qemu:commandline>
 </domain>

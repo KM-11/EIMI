@@ -34,18 +34,18 @@ class LibvirtHandler:
             print(colored("[X] Could not connect to qemu:///session", 'red'))
             exit(1)
 
-    def start_guest(self, arch):
+    def start_guest(self, arch, internet_mode):
         xml = get_xml(arch)
 
         if xml is None:
             print(colored("[X] XML file not found", 'red'))
-            exit(1)
+            return
 
         abs_path = convert_rel_to_abs(arch)
 
         if abs_path is None:
             print(colored("[X] Indicated architecture does not exist", 'red'))
-            exit(1)
+            return
 
         # Load .env file
         load_env_file()
@@ -57,7 +57,8 @@ class LibvirtHandler:
             path_qemu = os.getenv('QEMU_LINUX_PATH')
 
         xml_formatted = xml.format(machine_path=abs_path,
-                                   path_qemu=path_qemu)
+                                   path_qemu=path_qemu,
+                                   restrict_mode=internet_mode)
 
         domain = self.conn.createXML(xml_formatted)
 

@@ -1,13 +1,48 @@
 import r2pipe
 import json
 import base64
-
+import math
 from nltk import ngrams
+import functools 
 
 
 def get_ngrams(opcodes, n_ngram):
-    return ngrams(opcodes, n_ngram)
+   return ngrams(opcodes, n_ngram)
 
+def jaccard_index(a,b):
+    if a != None and b != None:
+      
+        return float(len(set(a).intersection(b)))/len(set(a).union(b))*100
+    else:
+        return 0
+
+def get_num_func_cc(func_dict_cc):
+    func_cc_count = {}
+    if func_dict_cc is not None:
+        for i in func_dict_cc:
+            try:
+                func_cc_count[func_dict_cc[i]] +=1
+            except:
+                func_cc_count[func_dict_cc[i]] = 1
+        return func_cc_count
+    return None
+
+def structural_similarity(a,b):
+    sample_a = get_num_func_cc(a)
+    sample_b = get_num_func_cc(b)
+
+    distance = []
+    if sample_a is not None and sample_b is not None:
+        for i in sample_a:
+            if i in sample_b:
+                distance.append(min(sample_a[i],sample_b[i])/max(sample_a[i],sample_b[i]))
+
+        for i in sample_b:
+            if i not in sample_a:
+                distance.append(0)
+
+        return (functools.reduce(lambda a,b: a+b,distance)/len(distance))*100
+    return 0
 
 class StaticAnalysis():
     def __init__(self, file):
@@ -27,7 +62,6 @@ class StaticAnalysis():
             section_dic = {}
             if 'name' in section:
                 section_dic['name'] = section['name']
-
             if 'entropy' in section:
                 section_dic['entropy'] = section['entropy']
             if 'perm' in section:
@@ -56,11 +90,13 @@ class StaticAnalysis():
         return list(map(lambda x: base64.b64decode(x['string']), strings))
 
     def get_list_func(self):
-        self.r2_handler.cmd('aaa')
-        func_list = json.loads(self.r2_handler.cmd('aflj'))
+        try:
+            self.r2_handler.cmd('aaa')
+            func_list = json.loads(self.r2_handler.cmd('aflj'))
 
-        func_list = list(map(lambda x: x['name'], func_list))
-
+            func_list = list(map(lambda x: x['name'], func_list))
+        except:
+            pass
         return func_list
 
     def get_opcodes_func(self):
@@ -69,10 +105,13 @@ class StaticAnalysis():
         func_opcodes = {}
         for func in func_list:
             if 'imp' not in func:
-                opcodes = json.loads(self.r2_handler.cmd('s ' + func + "; pdfj"))
-                opcodes = list(filter(lambda x: 'opcode' in x, opcodes['ops']))
-                opcodes = list(map(lambda x: x['opcode'].split(' ')[0], opcodes))
-                func_opcodes[func] = opcodes
+                try:
+                    opcodes = json.loads(self.r2_handler.cmd('s ' + func + "; pdfj"))
+                    opcodes = list(filter(lambda x: 'opcode' in x, opcodes['ops']))
+                    opcodes = list(map(lambda x: x['opcode'].split(' ')[0], opcodes))
+                    func_opcodes[func] = opcodes
+                except:
+                    pass
         return func_opcodes
 
     def get_complexity_cyclomatic(self):
@@ -80,28 +119,46 @@ class StaticAnalysis():
         func_cc = {}
         for func in func_list:
             if 'imp' not in func:
-                func_cc[func] = json.loads(self.r2_handler.cmd('s ' + func + "; afCc"))
-
-        print(func_cc)
+                try:
+                    func_cc[func] = json.loads(self.r2_handler.cmd('s ' + func + "; afCc"))
+                except:
+                    pass
+        return func_cc
+        
 
 
 class Elf:
 
     def __init__(self, file):
         self.static_analysis = StaticAnalysis(file)
+        self.arch = None
+        self.machine = None
+        self.bits = None
+        self.bintype = None
+        self.compiler = None
+        self.stripped = None
+        self.endian = None
+        self.sections = None
+        self.imports = None
+        self.libs = None
+        self.md5 = None
+        self.sha1 = None
+        self.cc = None
+        self.opcodes_func = None
+        self.n_grams = None
 
     def information_file(self):
         binary_info = self.static_analysis.get_info_file()
         if 'bin' not in binary_info:
             print("No es un archivo EXECutable!!!!")
-            exit(1)
+            return
 
         self.arch = binary_info['bin']['arch']
         self.machine = binary_info['bin']['machine']
         self.bits = binary_info['bin']['bits']
         self.bintype = binary_info['bin']['bintype']
         self.compiler = binary_info['bin']['compiler']
-        self.stripped = binary_info['bin']['stripped']
+        self.stripped = ''#binary_info['bin']['stripped']
         self.endian = binary_info['bin']['endian']
 
     def sections_file(self):
@@ -135,3 +192,23 @@ class Elf:
 
     def get_strings(self):
         self.strings = self.static_analysis.get_data_strings()
+
+    def dump_to_dict(self):
+        elf_dict = dict()
+        elf_dict['arch'] = self.arch 
+        elf_dict['machine'] = self.machine
+        elf_dict['bits'] = self.bits
+        elf_dict['bintype'] = self.bintype
+        elf_dict['compiler'] = self.compiler
+        # elf_dict['stripped'] = self.stripped
+        elf_dict['endian'] = self.endian
+        elf_dict['sections'] = self.sections
+        elf_dict['imports'] = self.imports
+        elf_dict['libs'] = self.libs
+        elf_dict['md5'] = self.md5
+        elf_dict['sha1'] = self.sha1
+        elf_dict['cc'] = self.cc
+        elf_dict['opcodes_func'] = self.opcodes_func
+        # elf_dict['n_grams'] = self.n_grams
+        return elf_dict
+
