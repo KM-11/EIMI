@@ -6,6 +6,7 @@ import sqlite3
 from datetime import date
 from termcolor import colored
 import json
+import functools
 
 
 def load_env_file():
@@ -90,8 +91,15 @@ def get_data_bbdd(field, hash, table, mode):
         result = []
 
         # Execute query
-        cursor.execute('SELECT ' + field + ' FROM ' + table + ' WHERE hash = "' + hash + '";')
-        print('SELECT ' + field + ' FROM ' + table + ' WHERE hash = "' + hash + '";')
+        if mode == 'n_grams':
+            cursor.execute("SELECT static_anal FROM web_muestra WHERE hash != '" + hash + "';")
+            type = 'opcodes_func'
+        elif mode == 'cc':
+            cursor.execute("SELECT static_anal FROM web_muestra WHERE hash != '" + hash + "';")
+            type = 'cc'
+        else:
+            cursor.execute("SELECT static_anal FROM web_muestra WHERE hash != '" + hash + "';")
+            type = 'dynamic'
 
         # Parse
         sample_data = cursor.fetchall()
@@ -99,14 +107,14 @@ def get_data_bbdd(field, hash, table, mode):
         for i in sample_data:
             a = json.loads(i[0])
             data = dict()
-            data['name'] = a['hash']
-            data['opcodes_func'] = a['static_anal']['opcodes_func']
+            data['name'] = a['md5']
+            data[type] = a[type]
             result.append(data)
 
         # Commit changes and close the connection
         sqliteConnection.commit()
         sqliteConnection.close()
-        print(result)
+
         return result
     except sqlite3.Error as error:
         print(colored("[X] Failed to insert data into sqlite table: " + str(error).lower(), 'red'))

@@ -91,12 +91,13 @@ def pipeline(sample_path, sample_name, options):
     ### Database queries ###
     ########################
     print(colored("[+] Storing analysis results into database", 'green'))
-    db_fields = (sample.md5, sample_name, str(syscalls), None, None, vm_guest, sample_info, date.today())
+    db_fields = (sample.md5, sample_name, str(syscalls), None, None, vm_guest, str(sample_info), date.today())
     store_static_fields(db_fields)
 
     # End of pipeline
 
     cluster_ngrams(sample)
+    cluster_cc(sample)
     print(colored("[+] Done!\n", 'green'))
 
 
