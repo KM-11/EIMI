@@ -93,7 +93,7 @@ def run_sample(ssh, localpath, remotepath):
     # Run strace in deployed virtual machine
     ssh.exec_command(command)
 
-    print(colored("[+] Executing sample... (" + os.getenv('EXECUTION_TIMEOUT') + " secs)", 'green'))
+    print(colored("[+] Executing sample (" + os.getenv('EXECUTION_TIMEOUT') + " secs)...", 'green'))
     time.sleep(int(os.getenv('EXECUTION_TIMEOUT')))  # Timeout to execute malware
 
     # Download strace output files
