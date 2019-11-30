@@ -8,6 +8,7 @@ from datetime import date
 import json
 from parser import syscall_parser
 import glob
+from cluster import *
 
 
 def pipeline(sample_path, sample_name, options):
@@ -94,6 +95,8 @@ def pipeline(sample_path, sample_name, options):
     store_static_fields(db_fields)
 
     # End of pipeline
+
+    cluster_ngrams(sample)
     print(colored("[+] Done!\n", 'green'))
 
 

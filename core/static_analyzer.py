@@ -7,7 +7,7 @@ import functools
 
 
 def get_ngrams(opcodes, n_ngram):
-    return ngrams(opcodes, n_ngram)
+   return ngrams(opcodes, n_ngram)
 
 def jaccard_index(a,b):
     if a != None and b != None:
