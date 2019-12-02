@@ -13,7 +13,25 @@ def load_env_file():
     env_path = Path('..') / '.env'
     dotenv.load_dotenv(dotenv_path=env_path)
 
+def get_report(resource):
+    headers = {
+        "Accept-Encoding": "gzip, deflate",
+    }
+    global API_KEY
+    params = {'apikey': API_KEY_VT , 'resource': resource}
 
+    response = requests.get(API_REPORT_VT, params=params, headers=headers)
+    return response.text
+
+def get_av_detection(report_json):
+    av = []
+    for i in report_json['scans']:
+        if report_json['scans'][i]['detected'] == True:
+            av_name = i
+            label = report_json['scans'][i]['result']
+            av.append((av_name,label))
+    return av
+    
 def is_ip_valid(ip):
     try:
         ipaddress.ip_address(ip)
