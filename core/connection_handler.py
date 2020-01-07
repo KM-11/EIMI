@@ -87,7 +87,7 @@ def run_sample(ssh, localpath, remotepath):
     scp.put(localpath, remote_path=os.path.join(remotepath, filename))
 
     # Build commands to execute in VM
-    command = "cd " + os.path.join(remotepath, filename) + "; chmod +x " + filename + "; strace -ff -o " \
+    command = "cd " + os.path.join(remotepath, filename) + "; chmod +x " + filename + "; strace -s 100 -qq -e 'signal=!all' -ff -o " \
               + filename + " ./" + filename + ' & sleep ' + os.getenv('EXECUTION_TIMEOUT') + "; kill -9 $!"
 
     # Run strace in deployed virtual machine

@@ -1,16 +1,23 @@
 import glob
 import re
-
+import os
 
 def syscall_parser(sample_name):
-    full_syscalls = []
+    full_syscalls = {}
 
     strace_outputs = glob.glob(sample_name + "/*")
 
     for file in strace_outputs:
         if re.search('\.[0-9]+', file) is not None:
             with open(file, "r") as f:
-                full_syscalls.append(single_syscall_parser(f.readlines()))
+                filename = os.path.basename(file)
+                pid = filename.split(".")[1]
+                full_syscalls[pid] = {}
+
+                syscalls, params, results = single_syscall_parser(f.readlines())
+                full_syscalls[pid]['syscalls'] = syscalls
+                full_syscalls[pid]['params'] = params
+                full_syscalls[pid]['results'] = results
 
     return full_syscalls
 
@@ -34,7 +41,7 @@ def single_syscall_parser(lines):
     # obtenemos los parámetros refinados, la expresión regular obtiene todas las comas que no estén dentro de un parámetro válido.
     # Por ejemplo  en la cadena:("a","v","s",["a","v"],"a,s,f") solo nos interesan las comas 1,2,3 y 5, las otras forman parte de un parámetro anidado
 
-    finallist = list(map(lambda x, y, z: {"syscall": x, "params": y, "res": z}, syscalls, refinedparams,
-                         res))  # obtenemos una lista de diccionarios con cada syscall
+    #finallist = list(map(lambda x, y, z: {"syscall": x, "params": y, "res": z}, syscalls, refinedparams,
+    #                     res))  # obtenemos una lista de diccionarios con cada syscall
 
-    return finallist
+    return syscalls, params, res

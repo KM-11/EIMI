@@ -121,7 +121,6 @@ def get_data_bbdd(field, hash, table, mode):
 
         # Parse
         sample_data = cursor.fetchall()
-
         for i in sample_data:
             a = json.loads(i[0])
             data = dict()

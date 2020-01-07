@@ -46,7 +46,7 @@ def structural_similarity(a,b):
 
 class StaticAnalysis():
     def __init__(self, file):
-        self.r2_handler = r2pipe.open(file)
+        self.r2_handler = r2pipe.open(file,flags=['-2'])
 
     def __del__(self):
         self.r2_handler.quit()
