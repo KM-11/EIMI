@@ -24,7 +24,7 @@
         "chart.js": "2.9.3",
         "d3": "5.14.2",
         "d3-scale-chromatic": "^1.5.0",
-        "datatables.net-bs4": "1.10.20",
+        "datatables.net-bs4": "1.10.23",
         "jquery": "3.4.1",
         "jquery.easing": "1.4.1",
         "perfect-scrollbar": "^1.4.0",
