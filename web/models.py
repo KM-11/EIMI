@@ -1,7 +1,7 @@
 from django.db import models
 import datetime
 # Create your models here.
-class Family (models.Model):
+class Familia (models.Model):
     name = models.CharField(max_length=50)
     def __str__(self):
         return self.name
@@ -25,14 +25,14 @@ class Vmachine(models.Model):
 
 
 
-class Sample(models.Model):
+class Muestra(models.Model):
     hash = models.CharField(max_length=50, primary_key=True)
     name = models.CharField(max_length=50, null=True)
     Vmachine_dst = models.ForeignKey(Vmachine,null=True,on_delete=models.SET_NULL)
     architecture = models.CharField(max_length=30, default="arm_32",null=True)
     analisis =models.TextField(blank = True,null=True)
     static_anal = models.TextField(blank = True,null=True)
-    familia = models.ForeignKey(Family, null=True, on_delete=models.SET_NULL)
+    familia = models.ForeignKey(Familia, null=True, on_delete=models.SET_NULL)
     date = models.DateField(default=datetime.date.today,null=True)
     def __str__(self):
         if self.name is not None:
