@@ -1,7 +1,7 @@
 from django.db import models
 import datetime
 # Create your models here.
-class Familia (models.Model):
+class Family (models.Model):
     name = models.CharField(max_length=50)
     def __str__(self):
         return self.name
@@ -25,7 +25,7 @@ class Vmachine(models.Model):
 
 
 
-class Muestra(models.Model):
+class Sample(models.Model):
     hash = models.CharField(max_length=50, primary_key=True)
     name = models.CharField(max_length=50, null=True)
     Vmachine_dst = models.ForeignKey(Vmachine,null=True,on_delete=models.SET_NULL)
