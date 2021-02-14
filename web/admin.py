@@ -1,4 +1,4 @@
-from .models import Vmachine, Sample, Architecture, Family
+from .models import Vmachine, Muestra, Architecture, Familia
 from django.contrib import admin
 
 # Register your models here.
