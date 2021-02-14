@@ -32,7 +32,7 @@ class Sample(models.Model):
     architecture = models.CharField(max_length=30, default="arm_32",null=True)
     analisis =models.TextField(blank = True,null=True)
     static_anal = models.TextField(blank = True,null=True)
-    familia = models.ForeignKey(Familia, null=True, on_delete=models.SET_NULL)
+    familia = models.ForeignKey(Family, null=True, on_delete=models.SET_NULL)
     date = models.DateField(default=datetime.date.today,null=True)
     def __str__(self):
         if self.name is not None:
