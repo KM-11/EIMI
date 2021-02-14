@@ -2,16 +2,15 @@ pipeline {
     agent any
     stages {
 
-        stage('Build docker image') {
+        stage('Check dependencies') {
             steps {
-                sh 'docker-compose build
+                sh 'python3 -m safety -r requirements.txt'
             }
         }
 
-        stage('Scan docker image') {
+        stage('Static Code Analyisis') {
             steps {
-                sh 'clair-scanner --ip 192.168.1.120 webserver || exit 0'
-                sh 'clair-scanner --ip 192.168.1.120 mysqlserver || exit 0'
+                sh 'python3 -m bandit -r ./'
             }
         }
 
