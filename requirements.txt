@@ -1,6 +1,6 @@
 Django==2.2.7
 libvirt-python
-paramiko==2.6.0
+paramiko==3.4.0
 termcolor==1.1.0
 python-dotenv==0.10.3
 scp==0.13.2
